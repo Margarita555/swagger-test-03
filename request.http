@@ -1,28 +1,32 @@
 ###
-POST http://localhost:9000/api/users HTTP/1.1
+POST http://localhost:9000/api/vehicles HTTP/1.1
 Content-Type: application/json
 
 {
-  "name": "George Mandel",
-  "age": 70,
-  "email": "georgemandel@email.com"
+  "category": "economl",
+  "brand": "honda",
+  "number": "TA4567KA",
+  "productionYear": "2017",
+  "owner": "John Conway"
 }
 
 ###
-GET http://localhost:9000/api/users HTTP/1.1
+GET http://localhost:9000/api/vehicles HTTP/1.1
 
 ###
-GET http://localhost:9000/api/users/62516e9675655ed4202d6576 HTTP/1.1
+GET http://localhost:9000/api/vehicles/62516e9675655ed4202d6576 HTTP/1.1
 
 ###
-DELETE http://localhost:9000/api/users/62516e9675655ed4202d6576 HTTP/1.1
+DELETE http://localhost:9000/api/vehicles/62516e9675655ed4202d6576 HTTP/1.1
 
 ###
-PUT http://localhost:9000/api/users/62516cb40288ad320483b9da HTTP/1.1
+PUT http://localhost:9000/api/vehicles/62516cb40288ad320483b9da HTTP/1.1
 Content-Type: application/json
 
 {
-  "name": "John Conway",
-  "age": 80,
-  "email": "johnconway@email.com"
+  "category": "standard",
+  "brand": "tesla",
+  "number": "TA7823CA",
+  "productionYear": "2019",
+  "owner": "Rayan King"
 }

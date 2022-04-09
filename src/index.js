@@ -14,7 +14,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 require("dotenv").config();
-const userRoute = require("./routes/user");
+const vehicleRoute = require("./routes/user");
 const path = require("path");
 
 const swaggerUI = require("swagger-ui-express");
@@ -39,7 +39,7 @@ const app = express();
 const port = process.env.PORT || 9000;
 
 app.use(express.json());
-app.use("/api", userRoute);
+app.use("/api", vehicleRoute);
 app.use(
   "/api-doc",
   swaggerUI.serve,
