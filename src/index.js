@@ -1,20 +1,7 @@
-// const { MongoClient } = require("mongodb");
-// const client = new MongoClient(
-//   "mongodb+srv://Rita:pepsy777@cluster0.xfbkk.mongodb.net/firstDatabase?retryWrites=true&w=majority"
-// );
-// const start = async () => {
-//   try {
-//     await client.connect();
-//     console.log("success");
-//   } catch (e) {
-//     console.log(e);
-//   }
-// };
-// start();
 const express = require("express");
 const mongoose = require("mongoose");
 require("dotenv").config();
-const vehicleRoute = require("./routes/user");
+const vehicleRoute = require("./routes/swagger");
 const path = require("path");
 
 const swaggerUI = require("swagger-ui-express");

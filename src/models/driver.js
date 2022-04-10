@@ -1,26 +1,27 @@
 const mongoose = require("mongoose");
+const { Schema } = mongoose;
 
-const vehicleSchema = mongoose.Schema({
-  category: {
+const driverSchema = new Schema({
+  name: {
     type: String,
     required: true,
   },
-  brand: {
+  birthDate: {
     type: String,
     required: true,
   },
-  number: {
+  address: {
     type: String,
     required: true,
   },
-  productionYear: {
+  city: {
+    type: String,
+    required: true,
+  },
+  rating: {
     type: Number,
-    required: true,
-  },
-  owner: {
-    type: String,
     required: true,
   },
 });
 
-module.exports = mongoose.model("Vehicle", vehicleSchema);
+module.exports = mongoose.model("Driver", driverSchema);
