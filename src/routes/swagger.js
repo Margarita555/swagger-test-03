@@ -4,10 +4,17 @@ const driverSchema = require("../models/driver");
 
 const router = express.Router();
 
-// add a vehicle
 /**
  * @swagger
+ * security:
+ * - app_id: []
  * components:
+ *  securitySchemes:
+ *    app_id:
+ *      type: apiKey
+ *      description: API key to authorize requests. If you don't have an OpenParkingMap API key, use `fd4698c940c6d1da602a70ac34f0b147`.
+ *      name: appid
+ *      in: header
  *  schemas:
  *    Vehicle:
  *      type: object
@@ -71,6 +78,22 @@ const router = express.Router();
  *        rating: 10
  */
 
+// /**
+//  * @swagger
+//  * securityDefinitions:
+//  *   vehicle_auth:
+//  *     type: "oath2"
+//  *     authorizationUrl: ""
+//  *     flow: "implicit"
+//  *     scopes:
+//  *       write:vehicle: "modify"
+//  *       read:vehicle: "read your vehicles"
+//  *   api_key:
+//  *     type: "apiKey"
+//  *     name: "api_key"
+//  *     in: "header"
+//  */
+// add a vehicle
 /**
  * @swagger
  * /api/vehicles:
@@ -87,6 +110,8 @@ const router = express.Router();
  *    responses:
  *      200:
  *        description: new vehicle created!
+ *    security:
+ *    - app_id: []
  */
 router.post("/vehicles", (req, res) => {
   const vehicle = vehicleSchema(req.body);
@@ -112,6 +137,8 @@ router.post("/vehicles", (req, res) => {
  *              type: array
  *              items:
  *                $ref: '#/components/schemas/Vehicle'
+ *    security:
+ *    - app_id: []
  */
 router.get("/vehicles", (req, res) => {
   vehicleSchema
@@ -172,6 +199,8 @@ router.get("/vehicles/:id", (req, res) => {
  *        description: the vehicle deleted
  *      404:
  *        description: vehicle not found
+ *    security:
+ *    - app_id: []
  */
 router.delete("/vehicles/:id", (req, res) => {
   const { id } = req.params;
@@ -207,6 +236,8 @@ router.delete("/vehicles/:id", (req, res) => {
  *        description: the vehicle updated
  *      404:
  *        description: vehicle not found
+ *    security:
+ *    - app_id: []
  */
 router.put("/vehicles/:id", (req, res) => {
   const { id } = req.params;
@@ -235,6 +266,8 @@ router.put("/vehicles/:id", (req, res) => {
  *    responses:
  *      200:
  *        description: new driver added!
+ *    security:
+ *    - app_id: []
  */
 router.post("/drivers", (req, res) => {
   const driver = driverSchema(req.body);
@@ -260,6 +293,8 @@ router.post("/drivers", (req, res) => {
  *              type: array
  *              items:
  *                $ref: '#/components/schemas/Driver'
+ *    security:
+ *    - app_id: []
  */
 router.get("/drivers", (req, res) => {
   driverSchema
@@ -287,6 +322,8 @@ router.get("/drivers", (req, res) => {
  *        description: the driver deleted
  *      404:
  *        description: driver not found
+ *    security:
+ *    - app_id: []
  */
 router.delete("/drivers/:id", (req, res) => {
   const { id } = req.params;
@@ -322,6 +359,8 @@ router.delete("/drivers/:id", (req, res) => {
  *        description: the driver updated
  *      404:
  *        description: driver not found
+ *    security:
+ *    - app_id: []
  */
 router.put("/drivers/:id", (req, res) => {
   const { id } = req.params;
