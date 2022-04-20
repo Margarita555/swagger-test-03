@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 require("dotenv").config();
+
 const vehicleRoute = require("./routes/swagger");
 const path = require("path");
 
@@ -39,7 +40,7 @@ app.get("/", (req, res) => {
 });
 
 mongoose
-  .connect(process.env.MONGODB_URI)
+  .connect(process.env.MONGODB_URI, { useNewUrlParser: true })
   .then(() => console.log("Connected to MongoDB Atlas"))
   .catch((error) => console.error(error));
 
