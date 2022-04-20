@@ -40,7 +40,7 @@ app.get("/", (req, res) => {
 });
 
 mongoose
-  .connect(process.env.MONGODB_URI, { useNewUrlParser: true })
+  .connect(String(process.env.MONGODB_URI))
   .then(() => console.log("Connected to MongoDB Atlas"))
   .catch((error) => console.error(error));
 
