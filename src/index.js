@@ -15,7 +15,8 @@ const swaggerSpec = {
     },
     servers: [
       {
-        url: "http://localhost:9000",
+        url: "https://git.heroku.com/swagger-test-03.git",
+        // url: "http://localhost:9000",
       },
     ],
   },
