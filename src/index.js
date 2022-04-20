@@ -40,8 +40,21 @@ app.get("/", (req, res) => {
 });
 
 mongoose
-  .connect(String(process.env.MONGODB_URI))
+  .connect(
+    "mongodb+srv://Rita:pepsy777@cluster0.xfbkk.mongodb.net/firstDatabase?retryWrites=true&w=majority",
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }
+  )
   .then(() => console.log("Connected to MongoDB Atlas"))
   .catch((error) => console.error(error));
+// mongoose
+//   .connect(process.env.MONGODB_URI, {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true,
+//   })
+//   .then(() => console.log("Connected to MongoDB Atlas"))
+//   .catch((error) => console.error(error));
 
 app.listen(port, () => console.log("Server listening to", port));
