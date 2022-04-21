@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const mongoose = require("mongoose");
 require("dotenv").config();
 
@@ -16,8 +17,8 @@ const swaggerSpec = {
     },
     servers: [
       {
-        url: "https://swagger-test-03.herokuapp.com",
-        // url: "http://localhost:9000",
+        // url: "https://swagger-test-03.herokuapp.com",
+        url: "http://localhost:9000",
       },
     ],
   },
@@ -27,6 +28,7 @@ const swaggerSpec = {
 const app = express();
 const port = process.env.PORT || 9000;
 
+app.use(cors());
 app.use(express.json());
 app.use("/api", vehicleRoute);
 app.use(
