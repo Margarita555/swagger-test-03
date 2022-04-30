@@ -1,5 +1,5 @@
 const express = require("express");
-const vehicleSchema = require("../models/vehicle");
+const carSchema = require("../models/car");
 const driverSchema = require("../models/driver");
 
 const router = express.Router();
@@ -16,36 +16,36 @@ const router = express.Router();
  *      name: appid
  *      in: header
  *  schemas:
- *    Vehicle:
+ *    Car:
  *      type: object
  *      properties:
- *        category:
+ *        status:
  *          type: string
- *          description: the vehicle class
+ *          description: status of the car
  *        brand:
  *          type: string
- *          description: the vehicle brand
+ *          description: the car brand
  *        number:
  *          type: string
- *          description: the vehicle number
- *        productionYear:
+ *          description: the car number
+ *        year:
  *          type: integer
- *          description: the vehicle year of production
- *        owner:
+ *          description: the year of production
+ *        driver_id:
  *          type: string
- *          description: the vehicle's owner
+ *          description: the driver's id
  *      required:
- *        - category
+ *        - status
  *        - brand
  *        - number
- *        - productionYear
- *        - owner
+ *        - year
+ *        - driver_id
  *      example:
- *        category: standard
+ *        status: standard
  *        brand: honda
  *        number: AX1234KA
- *        productionYear: 2018
- *        owner: Alan Ray
+ *        year: 2018
+ *        driver_id: 34598723ASD
  *    Driver:
  *      type: object
  *      properties:
@@ -64,188 +64,195 @@ const router = express.Router();
  *        rating:
  *          type: integer
  *          description: the driver's rating
+ *        status:
+ *          type: string
+ *          description: the driver's status
  *      required:
  *        - name
  *        - birthDate
  *        - address
  *        - city
  *        - rating
+ *        - status
  *      example:
  *        name: Alex
  *        birthDate: 23.10.1996
  *        address: Green Street
  *        city: Kharkiv
  *        rating: 10
+ *        status: active
  */
 
 // /**
 //  * @swagger
 //  * securityDefinitions:
-//  *   vehicle_auth:
+//  *   car_auth:
 //  *     type: "oath2"
 //  *     authorizationUrl: ""
 //  *     flow: "implicit"
 //  *     scopes:
-//  *       write:vehicle: "modify"
-//  *       read:vehicle: "read your vehicles"
+//  *       write:car: "modify"
+//  *       read:car: "read your cars"
 //  *   api_key:
 //  *     type: "apiKey"
 //  *     name: "api_key"
 //  *     in: "header"
 //  */
-// add a vehicle
+// add a car
 /**
  * @swagger
- * /api/vehicles:
+ * /api/cars:
  *  post:
- *    summary: create a new vehicle
- *    tags: [Vehicle]
+ *    summary: create a new car
+ *    tags: [Car]
  *    requestBody:
  *      required: true
  *      content:
  *        application/json:
  *          schema:
  *            type: object
- *            $ref: '#/components/schemas/Vehicle'
+ *            $ref: '#/components/schemas/Car'
  *    responses:
  *      200:
- *        description: new vehicle created!
+ *        description: new car created!
  *    security:
  *    - app_id: []
  */
-router.post("/vehicles", (req, res) => {
-  const vehicle = vehicleSchema(req.body);
-  vehicle
+router.post("/cars", (req, res) => {
+  const car = carSchema(req.body);
+  car
     .save()
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));
 });
 
-// get all vehicles
+// get all cars
 /**
  * @swagger
- * /api/vehicles:
+ * /api/cars:
  *  get:
- *    summary: return all vehicles
- *    tags: [Vehicle]
+ *    summary: return all cars
+ *    tags: [Car]
  *    responses:
  *      200:
- *        description: all vehicles
+ *        description: all cars
  *        content:
  *          application/json:
  *            schema:
  *              type: array
  *              items:
- *                $ref: '#/components/schemas/Vehicle'
+ *                $ref: '#/components/schemas/Car'
  *    security:
  *    - app_id: []
  */
-router.get("/vehicles", (req, res) => {
-  vehicleSchema
+router.get("/cars", (req, res) => {
+  carSchema
     .find()
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));
 });
 
-// get a vehicle
+// get a car
 /**
  * @swagger
- * /api/vehicles/{id}:
+ * /api/cars/{id}:
  *  get:
- *    summary: return a vehicle
- *    tags: [Vehicle]
+ *    summary: return a car
+ *    tags: [Car]
  *    parameters:
  *      - in: path
  *        name: id
  *        schema:
  *          type: string
  *          required: true
- *          description: the vehicle id
+ *          description: the car id
  *    responses:
  *      200:
- *        description: a vehicle
+ *        description: a car
  *        content:
  *          application/json:
  *            schema:
  *              type: object
- *              $ref: '#/components/schemas/Vehicle'
+ *              $ref: '#/components/schemas/Car'
  *      404:
- *        description: vehicle not found
+ *        description: car not found
+ *    security:
+ *    - app_id: []
  */
-router.get("/vehicles/:id", (req, res) => {
+router.get("/cars/:id", (req, res) => {
   const { id } = req.params;
-  vehicleSchema
+  carSchema
     .findById(id)
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));
 });
 
-// delete a vehicle
+// delete a car
 /**
  * @swagger
- * /api/vehicles/{id}:
+ * /api/cars/{id}:
  *  delete:
- *    summary: delete a vehicle
- *    tags: [Vehicle]
+ *    summary: delete a car
+ *    tags: [Car]
  *    parameters:
  *      - in: path
  *        name: id
  *        schema:
  *          type: string
  *          required: true
- *          description: the vehicle id
+ *          description: the car id
  *    responses:
  *      200:
- *        description: the vehicle deleted
+ *        description: the car deleted
  *      404:
- *        description: vehicle not found
+ *        description: car not found
  *    security:
  *    - app_id: []
  */
-router.delete("/vehicles/:id", (req, res) => {
+router.delete("/cars/:id", (req, res) => {
   const { id } = req.params;
-  vehicleSchema
+  carSchema
     .remove({ _id: id })
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));
 });
 
-// update a vehicle
+// update a car
 /**
  * @swagger
- * /api/vehicles/{id}:
+ * /api/cars/{id}:
  *  put:
- *    summary: update a vehicle
- *    tags: [Vehicle]
+ *    summary: update a car
+ *    tags: [Car]
  *    parameters:
  *      - in: path
  *        name: id
  *        schema:
  *          type: string
  *          required: true
- *          description: the vehicle id
+ *          description: the car id
  *    requestBody:
  *      required: true
  *      content:
  *        application/json:
  *          schema:
  *            type: object
- *            $ref: '#/components/schemas/Vehicle'
+ *            $ref: '#/components/schemas/Car'
  *    responses:
  *      200:
- *        description: the vehicle updated
+ *        description: the car updated
  *      404:
- *        description: vehicle not found
+ *        description: car not found
  *    security:
  *    - app_id: []
  */
-router.put("/vehicles/:id", (req, res) => {
+router.put("/cars/:id", (req, res) => {
   const { id } = req.params;
-  const { category, brand, number, productionYear, owner } = req.body;
-  vehicleSchema
+  const { status, brand, number, year, driver_id } = req.body;
+  carSchema
     .updateOne(
       { _id: id },
-      { $set: { category, brand, number, productionYear, owner } }
+      { $set: { status, brand, number, year, driver_id } }
     )
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));
@@ -364,11 +371,11 @@ router.delete("/drivers/:id", (req, res) => {
  */
 router.put("/drivers/:id", (req, res) => {
   const { id } = req.params;
-  const { name, birthDate, address, city, rating } = req.body;
+  const { name, birthDate, address, city, rating, status } = req.body;
   driverSchema
     .updateOne(
       { _id: id },
-      { $set: { name, birthDate, address, city, rating } }
+      { $set: { name, birthDate, address, city, rating, status } }
     )
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));

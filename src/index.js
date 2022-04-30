@@ -3,7 +3,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 require("dotenv").config();
 
-const vehicleRoute = require("./routes/swagger");
+const carRoute = require("./routes/swagger");
 const path = require("path");
 
 const swaggerUI = require("swagger-ui-express");
@@ -12,13 +12,13 @@ const swaggerSpec = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "Parking Lot API",
+      title: "Car Park API",
       version: "1.0.0",
     },
     servers: [
       {
-        url: "https://swagger-test-03.herokuapp.com",
-        // url: "http://localhost:9000",
+        // url: "https://swagger-test-03.herokuapp.com",
+        url: "http://localhost:9000",
       },
     ],
   },
@@ -30,7 +30,7 @@ const port = process.env.PORT || 9000;
 
 app.use(cors());
 app.use(express.json());
-app.use("/api", vehicleRoute);
+app.use("/api", carRoute);
 app.use(
   "/api-doc",
   swaggerUI.serve,
