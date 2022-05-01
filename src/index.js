@@ -17,8 +17,8 @@ const swaggerSpec = {
     },
     servers: [
       {
-        // url: "https://swagger-test-03.herokuapp.com",
-        url: "http://localhost:9000",
+        url: "https://swagger-test-03.herokuapp.com",
+        // url: "http://localhost:9000",
       },
     ],
   },
@@ -51,12 +51,5 @@ mongoose
   )
   .then(() => console.log("Connected to MongoDB Atlas"))
   .catch((error) => console.error(error));
-// mongoose
-//   .connect(process.env.MONGODB_URI, {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true,
-//   })
-//   .then(() => console.log("Connected to MongoDB Atlas"))
-//   .catch((error) => console.error(error));
 
 app.listen(port, () => console.log("Server listening to", port));
