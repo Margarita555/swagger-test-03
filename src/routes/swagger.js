@@ -103,7 +103,7 @@ const router = express.Router();
  * @swagger
  * /api/cars:
  *  post:
- *    summary: create a new car
+ *    summary: creates a new car
  *    tags: [Car]
  *    requestBody:
  *      required: true
@@ -114,7 +114,9 @@ const router = express.Router();
  *            $ref: '#/components/schemas/Car'
  *    responses:
  *      200:
- *        description: new car created!
+ *        description: ok
+ *      405:
+ *        description: Invalid input
  *    security:
  *    - app_id: []
  */
@@ -131,17 +133,19 @@ router.post("/cars", (req, res) => {
  * @swagger
  * /api/cars:
  *  get:
- *    summary: return all cars
+ *    summary: returns all cars
  *    tags: [Car]
  *    responses:
  *      200:
- *        description: all cars
+ *        description: ok
  *        content:
  *          application/json:
  *            schema:
  *              type: array
  *              items:
  *                $ref: '#/components/schemas/Car'
+ *      404:
+ *        description: Not found
  *    security:
  *    - app_id: []
  */
@@ -157,7 +161,7 @@ router.get("/cars", (req, res) => {
  * @swagger
  * /api/cars/{id}:
  *  get:
- *    summary: return a car
+ *    summary: returns a car
  *    tags: [Car]
  *    parameters:
  *      - in: path
@@ -168,14 +172,16 @@ router.get("/cars", (req, res) => {
  *          description: the car id
  *    responses:
  *      200:
- *        description: a car
+ *        description: ok
  *        content:
  *          application/json:
  *            schema:
  *              type: object
  *              $ref: '#/components/schemas/Car'
+ *      400:
+ *        description: Bad request
  *      404:
- *        description: car not found
+ *        description: Not found
  *    security:
  *    - app_id: []
  */
@@ -192,7 +198,7 @@ router.get("/cars/:id", (req, res) => {
  * @swagger
  * /api/cars/{id}:
  *  delete:
- *    summary: delete a car
+ *    summary: deletes a car
  *    tags: [Car]
  *    parameters:
  *      - in: path
@@ -203,9 +209,11 @@ router.get("/cars/:id", (req, res) => {
  *          description: the car id
  *    responses:
  *      200:
- *        description: the car deleted
+ *        description: ok
+ *      400:
+ *        description: Bad request
  *      404:
- *        description: car not found
+ *        description: Not found
  *    security:
  *    - app_id: []
  */
@@ -222,7 +230,7 @@ router.delete("/cars/:id", (req, res) => {
  * @swagger
  * /api/cars/{id}:
  *  put:
- *    summary: update a car
+ *    summary: updates a car
  *    tags: [Car]
  *    parameters:
  *      - in: path
@@ -240,9 +248,18 @@ router.delete("/cars/:id", (req, res) => {
  *            $ref: '#/components/schemas/Car'
  *    responses:
  *      200:
- *        description: the car updated
+ *        description: ok
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              $ref: '#/components/schemas/Car'
+ *      400:
+ *        description: Bad request
  *      404:
- *        description: car not found
+ *        description: Not found
+ *      405:
+ *        description: Invalid input
  *    security:
  *    - app_id: []
  */
@@ -262,7 +279,7 @@ router.put("/cars/:id", (req, res) => {
  * @swagger
  * /api/cars/{id}:
  *  patch:
- *    summary: update a car
+ *    summary: updates a car
  *    tags: [Car]
  *    parameters:
  *      - in: path
@@ -279,9 +296,18 @@ router.put("/cars/:id", (req, res) => {
  *            $ref: '#/components/schemas/Car'
  *    responses:
  *      200:
- *        description: the car updated
+ *        description: ok
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              $ref: '#/components/schemas/Car'
+ *      400:
+ *        description: Bad request
  *      404:
- *        description: car not found
+ *        description: Not found
+ *      405:
+ *        description: Invalid input
  *    security:
  *    - app_id: []
  */
@@ -300,7 +326,7 @@ router.patch("/cars/:id", (req, res) => {
  * @swagger
  * /api/drivers:
  *  post:
- *    summary: add a new driver
+ *    summary: adds a new driver
  *    tags: [Driver]
  *    requestBody:
  *      required: true
@@ -311,7 +337,9 @@ router.patch("/cars/:id", (req, res) => {
  *            $ref: '#/components/schemas/Driver'
  *    responses:
  *      200:
- *        description: new driver added!
+ *        description: ok
+ *      405:
+ *        description: Invalid input
  *    security:
  *    - app_id: []
  */
@@ -328,17 +356,19 @@ router.post("/drivers", (req, res) => {
  * @swagger
  * /api/drivers:
  *  get:
- *    summary: return all drivers
+ *    summary: returns all drivers
  *    tags: [Driver]
  *    responses:
  *      200:
- *        description: all drivers
+ *        description: ok
  *        content:
  *          application/json:
  *            schema:
  *              type: array
  *              items:
  *                $ref: '#/components/schemas/Driver'
+ *      404:
+ *        description: Not found
  *    security:
  *    - app_id: []
  */
@@ -354,7 +384,7 @@ router.get("/drivers", (req, res) => {
  * @swagger
  * /api/drivers/{id}:
  *  get:
- *    summary: return a driver
+ *    summary: returns a driver
  *    tags: [Driver]
  *    parameters:
  *      - in: path
@@ -365,14 +395,16 @@ router.get("/drivers", (req, res) => {
  *          description: the driver id
  *    responses:
  *      200:
- *        description: a driver
+ *        description: ok
  *        content:
  *          application/json:
  *            schema:
  *              type: object
  *              $ref: '#/components/schemas/Driver'
+ *      400:
+ *        description: Bad request
  *      404:
- *        description: car not found
+ *        description: Not found
  *    security:
  *    - app_id: []
  */
@@ -389,7 +421,7 @@ router.get("/drivers/:id", (req, res) => {
  * @swagger
  * /api/drivers/{id}:
  *  delete:
- *    summary: delete a driver
+ *    summary: deletes a driver
  *    tags: [Driver]
  *    parameters:
  *      - in: path
@@ -400,9 +432,11 @@ router.get("/drivers/:id", (req, res) => {
  *          description: the driver id
  *    responses:
  *      200:
- *        description: the driver deleted
+ *        description: ok
+ *      400:
+ *        description: Bad request
  *      404:
- *        description: driver not found
+ *        description: Not found
  *    security:
  *    - app_id: []
  */
@@ -419,7 +453,7 @@ router.delete("/drivers/:id", (req, res) => {
  * @swagger
  * /api/drivers/{id}:
  *  put:
- *    summary: update a driver
+ *    summary: updates a driver
  *    tags: [Driver]
  *    parameters:
  *      - in: path
@@ -437,9 +471,18 @@ router.delete("/drivers/:id", (req, res) => {
  *            $ref: '#/components/schemas/Driver'
  *    responses:
  *      200:
- *        description: the driver updated
+ *        description: ok
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              $ref: '#/components/schemas/Driver'
+ *      400:
+ *        description: Bad request
  *      404:
- *        description: driver not found
+ *        description: Not found
+ *      405:
+ *        description: Invalid input
  *    security:
  *    - app_id: []
  */
@@ -460,7 +503,7 @@ router.put("/drivers/:id", (req, res) => {
  * @swagger
  * /api/drivers/{id}:
  *  patch:
- *    summary: update a driver
+ *    summary: updates a driver
  *    tags: [Driver]
  *    parameters:
  *      - in: path
@@ -477,9 +520,18 @@ router.put("/drivers/:id", (req, res) => {
  *            $ref: '#/components/schemas/Driver'
  *    responses:
  *      200:
- *        description: the driver updated
+ *        description: ok
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              $ref: '#/components/schemas/Driver'
+ *      400:
+ *        description: Bad request
  *      404:
- *        description: driver not found
+ *        description: Not found
+ *      405:
+ *        description: Invalid input
  *    security:
  *    - app_id: []
  */
