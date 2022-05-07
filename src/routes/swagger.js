@@ -19,7 +19,7 @@ const router = express.Router();
  *    Car:
  *      type: object
  *      properties:
- *        driver_name:
+ *        driver_id:
  *          type: string
  *          description: the driver's name
  *        make:
@@ -38,7 +38,7 @@ const router = express.Router();
  *          type: string
  *          description: status of the car
  *      required:
- *        - driver_name
+ *        - driver_id
  *        - make
  *        - model
  *        - number
