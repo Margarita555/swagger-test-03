@@ -19,39 +19,47 @@ const router = express.Router();
  *    Car:
  *      type: object
  *      properties:
- *        status:
+ *        driver_name:
  *          type: string
- *          description: status of the car
- *        brand:
+ *          description: the driver's name
+ *        make:
  *          type: string
- *          description: the car brand
+ *          description: the car make
+ *        model:
+ *          type: string
+ *          description: the car model
  *        number:
  *          type: string
  *          description: the car number
  *        year:
  *          type: integer
  *          description: the year of production
- *        driver_id:
+ *        status:
  *          type: string
- *          description: the driver's id
+ *          description: status of the car
  *      required:
- *        - status
- *        - brand
+ *        - driver_name
+ *        - make
+ *        - model
  *        - number
  *        - year
- *        - driver_id
+ *        - status
  *      example:
- *        status: standard
- *        brand: honda
+ *        driver_name: Alex Ray
+ *        make: Honda
+ *        model: Civic
  *        number: AX1234KA
  *        year: 2018
- *        driver_id: 34598723ASD
+ *        status: standard
  *    Driver:
  *      type: object
  *      properties:
  *        name:
  *          type: string
  *          description: the driver's name
+ *        registrationDate:
+ *          type: string
+ *          description: date of the driver's registration
  *        birthDate:
  *          type: string
  *          description: date of the driver's birth
@@ -69,15 +77,17 @@ const router = express.Router();
  *          description: the driver's status
  *      required:
  *        - name
+ *        - registrationDate
  *        - birthDate
  *        - address
  *        - city
  *        - rating
  *        - status
  *      example:
- *        name: Alex
+ *        name: Alex Ray
+ *        registrationDate: 12.01.2022
  *        birthDate: 23.10.1996
- *        address: Green Street
+ *        address: Valentinovskaya Street,25
  *        city: Kharkiv
  *        rating: 10
  *        status: active
@@ -115,8 +125,15 @@ const router = express.Router();
  *    responses:
  *      200:
  *        description: ok
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              $ref: '#/components/schemas/Car'
  *      405:
  *        description: Invalid input
+ *      500:
+ *        description: Server error
  *    security:
  *    - app_id: []
  */
@@ -214,6 +231,8 @@ router.get("/cars/:id", (req, res) => {
  *        description: Bad request
  *      404:
  *        description: Not found
+ *      500:
+ *        description: Server error
  *    security:
  *    - app_id: []
  */
@@ -338,8 +357,15 @@ router.patch("/cars/:id", (req, res) => {
  *    responses:
  *      200:
  *        description: ok
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              $ref: '#/components/schemas/Driver'
  *      405:
  *        description: Invalid input
+ *      500:
+ *        description: Server error
  *    security:
  *    - app_id: []
  */
@@ -437,6 +463,8 @@ router.get("/drivers/:id", (req, res) => {
  *        description: Bad request
  *      404:
  *        description: Not found
+ *      500:
+ *        description: Server error
  *    security:
  *    - app_id: []
  */

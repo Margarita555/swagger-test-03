@@ -3,11 +3,15 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const carSchema = new Schema({
-  status: {
+  driver_name: {
     type: String,
     required: true,
   },
-  brand: {
+  make: {
+    type: String,
+    required: true,
+  },
+  model: {
     type: String,
     required: true,
   },
@@ -19,7 +23,7 @@ const carSchema = new Schema({
     type: Number,
     required: true,
   },
-  driver_id: {
+  status: {
     type: String,
     required: true,
   },
