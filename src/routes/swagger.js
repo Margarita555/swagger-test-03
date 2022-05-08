@@ -94,28 +94,11 @@ const router = express.Router();
  *    Error:
  *      type: object
  *      properties:
- *        code:
- *          type: string
  *        message:
  *          type: string
  *          example: Request failed
  */
 
-// /**
-//  * @swagger
-//  * securityDefinitions:
-//  *   car_auth:
-//  *     type: "oath2"
-//  *     authorizationUrl: ""
-//  *     flow: "implicit"
-//  *     scopes:
-//  *       write:car: "modify"
-//  *       read:car: "read your cars"
-//  *   api_key:
-//  *     type: "apiKey"
-//  *     name: "api_key"
-//  *     in: "header"
-//  */
 // add a car
 /**
  * @swagger
@@ -138,6 +121,13 @@ const router = express.Router();
  *            schema:
  *              type: object
  *              $ref: '#/components/schemas/Car'
+ *      400:
+ *        description: Bad request
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              $ref: '#/components/schemas/Error'
  *      405:
  *        description: Invalid input
  *        content:
@@ -153,7 +143,7 @@ router.post("/cars", (req, res) => {
   car
     .save()
     .then((data) => res.status(201).json(data))
-    .catch((error) => res.json({ message: error }));
+    .catch((error) => res.json({ message: error.message }));
 });
 
 // get all cars
@@ -172,8 +162,8 @@ router.post("/cars", (req, res) => {
  *              type: array
  *              items:
  *                $ref: '#/components/schemas/Car'
- *      404:
- *        description: Not found
+ *      500:
+ *        description: Server error
  *        content:
  *          application/json:
  *            schema:
@@ -185,14 +175,8 @@ router.post("/cars", (req, res) => {
 router.get("/cars", (req, res) => {
   carSchema
     .find()
-    .then((data) => {
-      if (data) {
-        res.status(200).json(data);
-      } else {
-        res.status(404).json({ messages: "Not found" });
-      }
-    })
-    .catch((error) => res.json({ message: error }));
+    .then((data) => res.status(200).json(data))
+    .catch((error) => res.status(500).json({ message: error.message }));
 });
 
 // get a car by car id
@@ -231,6 +215,13 @@ router.get("/cars", (req, res) => {
  *            schema:
  *              type: object
  *              $ref: '#/components/schemas/Error'
+ *      500:
+ *        description: Server error
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              $ref: '#/components/schemas/Error'
  *    security:
  *    - app_id: []
  */
@@ -238,8 +229,14 @@ router.get("/cars/:id", (req, res) => {
   const { id } = req.params;
   carSchema
     .findById(id)
-    .then((data) => res.json(data))
-    .catch((error) => res.json({ message: error }));
+    .then((data) => {
+      if (data) {
+        res.status(200).json(data);
+      } else {
+        res.status(404).json({ message: "Not found" });
+      }
+    })
+    .catch((error) => res.status(500).json({ message: error.message }));
 });
 
 // get a driver's cars
@@ -285,8 +282,14 @@ router.get("/cars/findByDriverId/:driverId", (req, res) => {
   const { driverId } = req.params;
   carSchema
     .find({ driverId: driverId })
-    .then((data) => res.json(data))
-    .catch((error) => res.json({ message: error }));
+    .then((data) => {
+      if (data) {
+        res.status(200).json(data);
+      } else {
+        res.status(404).json({ messages: "Not found" });
+      }
+    })
+    .catch((error) => res.json({ message: error.message }));
 });
 
 // delete a car
@@ -327,8 +330,14 @@ router.delete("/cars/:id", (req, res) => {
   const { id } = req.params;
   carSchema
     .remove({ _id: id })
-    .then((data) => res.json(data))
-    .catch((error) => res.json({ message: error }));
+    .then((data) => {
+      if (data) {
+        res.status(200).json(data);
+      } else {
+        res.status(404).json({ messages: "Not found" });
+      }
+    })
+    .catch((error) => res.json({ message: error.message }));
 });
 
 // update a car
@@ -382,8 +391,14 @@ router.put("/cars/:id", (req, res) => {
   const { status, brand, number, year, driverId } = req.body;
   carSchema
     .updateOne({ _id: id }, { $set: { status, brand, number, year, driverId } })
-    .then((data) => res.json(data))
-    .catch((error) => res.json({ message: error }));
+    .then((data) => {
+      if (data) {
+        res.status(200).json(data);
+      } else {
+        res.status(404).json({ messages: "Not found" });
+      }
+    })
+    .catch((error) => res.json({ message: error.message }));
 });
 // update a car
 /**
@@ -435,8 +450,14 @@ router.patch("/cars/:id", (req, res) => {
   const { status, brand, number, year, driverId } = req.body;
   carSchema
     .updateOne({ _id: id }, { $set: { status, brand, number, year, driverId } })
-    .then((data) => res.json(data))
-    .catch((error) => res.json({ message: error }));
+    .then((data) => {
+      if (data) {
+        res.status(200).json(data);
+      } else {
+        res.status(404).json({ messages: "Not found" });
+      }
+    })
+    .catch((error) => res.json({ message: error.message }));
 });
 /**
  * @swagger
@@ -493,8 +514,8 @@ router.post("/drivers", (req, res) => {
  *              type: array
  *              items:
  *                $ref: '#/components/schemas/Driver'
- *      404:
- *        description: Not found
+ *      500:
+ *        description: Server error
  *        content:
  *          application/json:
  *            schema:
@@ -506,8 +527,8 @@ router.post("/drivers", (req, res) => {
 router.get("/drivers", (req, res) => {
   driverSchema
     .find()
-    .then((data) => res.json(data))
-    .catch((error) => res.json({ message: error }));
+    .then((data) => res.status(200).json(data))
+    .catch((error) => res.status(500).json({ message: error.message }));
 });
 
 // get a driver by id
@@ -546,6 +567,13 @@ router.get("/drivers", (req, res) => {
  *            schema:
  *              type: object
  *              $ref: '#/components/schemas/Error'
+ *      500:
+ *        description: Server error
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              $ref: '#/components/schemas/Error'
  *    security:
  *    - app_id: []
  */
@@ -553,8 +581,14 @@ router.get("/drivers/:id", (req, res) => {
   const { id } = req.params;
   driverSchema
     .findById(id)
-    .then((data) => res.json(data))
-    .catch((error) => res.json({ message: error }));
+    .then((data) => {
+      if (data) {
+        res.status(200).json(data);
+      } else {
+        res.status(404).json({ messages: "Not found" });
+      }
+    })
+    .catch((error) => res.status(500).json({ message: error.message }));
 });
 
 // delete a driver
@@ -595,8 +629,14 @@ router.delete("/drivers/:id", (req, res) => {
   const { id } = req.params;
   driverSchema
     .remove({ _id: id })
-    .then((data) => res.json(data))
-    .catch((error) => res.json({ message: error }));
+    .then((data) => {
+      if (data) {
+        res.status(200).json(data);
+      } else {
+        res.status(404).json({ messages: "Not found" });
+      }
+    })
+    .catch((error) => res.json({ message: error.message }));
 });
 
 // update a driver
@@ -653,7 +693,13 @@ router.put("/drivers/:id", (req, res) => {
       { _id: id },
       { $set: { name, birthDate, address, city, rating, status } }
     )
-    .then((data) => res.json(data))
+    .then((data) => {
+      if (data) {
+        res.status(200).json(data);
+      } else {
+        res.status(404).json({ messages: "Not found" });
+      }
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -710,7 +756,13 @@ router.patch("/drivers/:id", (req, res) => {
       { _id: id },
       { $set: { name, birthDate, address, city, rating, status } }
     )
-    .then((data) => res.json(data))
+    .then((data) => {
+      if (data) {
+        res.status(200).json(data);
+      } else {
+        res.status(404).json({ messages: "Not found" });
+      }
+    })
     .catch((error) => res.json({ message: error }));
 });
 
