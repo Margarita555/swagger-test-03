@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const carSchema = new Schema({
-  driver_id: {
+  driverId: {
     type: String,
     required: true,
   },

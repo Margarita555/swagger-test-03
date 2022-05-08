@@ -19,7 +19,7 @@ const router = express.Router();
  *    Car:
  *      type: object
  *      properties:
- *        driver_id:
+ *        driverId:
  *          type: string
  *          description: the driver's name
  *        make:
@@ -38,14 +38,14 @@ const router = express.Router();
  *          type: string
  *          description: status of the car
  *      required:
- *        - driver_id
+ *        - driverId
  *        - make
  *        - model
  *        - number
  *        - year
  *        - status
  *      example:
- *        driver_name: Alex Ray
+ *        driverId: 627622eaa1161789f49f277c
  *        make: Honda
  *        model: Civic
  *        number: AX1234KA
@@ -91,6 +91,14 @@ const router = express.Router();
  *        city: Kharkiv
  *        rating: 10
  *        status: active
+ *    Error:
+ *      type: object
+ *      properties:
+ *        code:
+ *          type: string
+ *        message:
+ *          type: string
+ *          example: Request failed
  */
 
 // /**
@@ -123,8 +131,8 @@ const router = express.Router();
  *            type: object
  *            $ref: '#/components/schemas/Car'
  *    responses:
- *      200:
- *        description: ok
+ *      201:
+ *        description: success
  *        content:
  *          application/json:
  *            schema:
@@ -132,8 +140,11 @@ const router = express.Router();
  *              $ref: '#/components/schemas/Car'
  *      405:
  *        description: Invalid input
- *      500:
- *        description: Server error
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              $ref: '#/components/schemas/Error'
  *    security:
  *    - app_id: []
  */
@@ -141,7 +152,7 @@ router.post("/cars", (req, res) => {
   const car = carSchema(req.body);
   car
     .save()
-    .then((data) => res.json(data))
+    .then((data) => res.status(201).json(data))
     .catch((error) => res.json({ message: error }));
 });
 
@@ -163,22 +174,33 @@ router.post("/cars", (req, res) => {
  *                $ref: '#/components/schemas/Car'
  *      404:
  *        description: Not found
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              $ref: '#/components/schemas/Error'
  *    security:
  *    - app_id: []
  */
 router.get("/cars", (req, res) => {
   carSchema
     .find()
-    .then((data) => res.json(data))
+    .then((data) => {
+      if (data) {
+        res.status(200).json(data);
+      } else {
+        res.status(404).json({ messages: "Not found" });
+      }
+    })
     .catch((error) => res.json({ message: error }));
 });
 
-// get a car
+// get a car by car id
 /**
  * @swagger
  * /api/cars/{id}:
  *  get:
- *    summary: returns a car
+ *    summary: returns a car by car id
  *    tags: [Car]
  *    parameters:
  *      - in: path
@@ -197,8 +219,18 @@ router.get("/cars", (req, res) => {
  *              $ref: '#/components/schemas/Car'
  *      400:
  *        description: Bad request
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              $ref: '#/components/schemas/Error'
  *      404:
  *        description: Not found
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              $ref: '#/components/schemas/Error'
  *    security:
  *    - app_id: []
  */
@@ -206,6 +238,53 @@ router.get("/cars/:id", (req, res) => {
   const { id } = req.params;
   carSchema
     .findById(id)
+    .then((data) => res.json(data))
+    .catch((error) => res.json({ message: error }));
+});
+
+// get a driver's cars
+/**
+ * @swagger
+ * /api/cars/findByDriverId/{driverId}:
+ *  get:
+ *    summary: returns a driver's cars
+ *    tags: [Car]
+ *    parameters:
+ *      - in: path
+ *        name: driverId
+ *        schema:
+ *          type: string
+ *          required: true
+ *          description: the car id
+ *    responses:
+ *      200:
+ *        description: ok
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              $ref: '#/components/schemas/Car'
+ *      400:
+ *        description: Bad request
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              $ref: '#/components/schemas/Error'
+ *      404:
+ *        description: Not found
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              $ref: '#/components/schemas/Error'
+ *    security:
+ *    - app_id: []
+ */
+router.get("/cars/findByDriverId/:driverId", (req, res) => {
+  const { driverId } = req.params;
+  carSchema
+    .find({ driverId: driverId })
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));
 });
@@ -229,10 +308,18 @@ router.get("/cars/:id", (req, res) => {
  *        description: ok
  *      400:
  *        description: Bad request
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              $ref: '#/components/schemas/Error'
  *      404:
  *        description: Not found
- *      500:
- *        description: Server error
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              $ref: '#/components/schemas/Error'
  *    security:
  *    - app_id: []
  */
@@ -273,23 +360,28 @@ router.delete("/cars/:id", (req, res) => {
  *            schema:
  *              type: object
  *              $ref: '#/components/schemas/Car'
- *      400:
- *        description: Bad request
  *      404:
  *        description: Not found
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              $ref: '#/components/schemas/Error'
  *      405:
  *        description: Invalid input
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              $ref: '#/components/schemas/Error'
  *    security:
  *    - app_id: []
  */
 router.put("/cars/:id", (req, res) => {
   const { id } = req.params;
-  const { status, brand, number, year, driver_id } = req.body;
+  const { status, brand, number, year, driverId } = req.body;
   carSchema
-    .updateOne(
-      { _id: id },
-      { $set: { status, brand, number, year, driver_id } }
-    )
+    .updateOne({ _id: id }, { $set: { status, brand, number, year, driverId } })
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));
 });
@@ -321,23 +413,28 @@ router.put("/cars/:id", (req, res) => {
  *            schema:
  *              type: object
  *              $ref: '#/components/schemas/Car'
- *      400:
- *        description: Bad request
  *      404:
  *        description: Not found
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              $ref: '#/components/schemas/Error'
  *      405:
  *        description: Invalid input
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              $ref: '#/components/schemas/Error'
  *    security:
  *    - app_id: []
  */
 router.patch("/cars/:id", (req, res) => {
   const { id } = req.params;
-  const { status, brand, number, year, driver_id } = req.body;
+  const { status, brand, number, year, driverId } = req.body;
   carSchema
-    .updateOne(
-      { _id: id },
-      { $set: { status, brand, number, year, driver_id } }
-    )
+    .updateOne({ _id: id }, { $set: { status, brand, number, year, driverId } })
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));
 });
@@ -355,8 +452,8 @@ router.patch("/cars/:id", (req, res) => {
  *            type: object
  *            $ref: '#/components/schemas/Driver'
  *    responses:
- *      200:
- *        description: ok
+ *      201:
+ *        description: success
  *        content:
  *          application/json:
  *            schema:
@@ -364,8 +461,11 @@ router.patch("/cars/:id", (req, res) => {
  *              $ref: '#/components/schemas/Driver'
  *      405:
  *        description: Invalid input
- *      500:
- *        description: Server error
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              $ref: '#/components/schemas/Error'
  *    security:
  *    - app_id: []
  */
@@ -373,7 +473,7 @@ router.post("/drivers", (req, res) => {
   const driver = driverSchema(req.body);
   driver
     .save()
-    .then((data) => res.json(data))
+    .then((data) => res.status(201).json(data))
     .catch((error) => res.json({ message: error }));
 });
 
@@ -395,6 +495,11 @@ router.post("/drivers", (req, res) => {
  *                $ref: '#/components/schemas/Driver'
  *      404:
  *        description: Not found
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              $ref: '#/components/schemas/Error'
  *    security:
  *    - app_id: []
  */
@@ -429,8 +534,18 @@ router.get("/drivers", (req, res) => {
  *              $ref: '#/components/schemas/Driver'
  *      400:
  *        description: Bad request
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              $ref: '#/components/schemas/Error'
  *      404:
  *        description: Not found
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              $ref: '#/components/schemas/Error'
  *    security:
  *    - app_id: []
  */
@@ -461,10 +576,18 @@ router.get("/drivers/:id", (req, res) => {
  *        description: ok
  *      400:
  *        description: Bad request
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              $ref: '#/components/schemas/Error'
  *      404:
  *        description: Not found
- *      500:
- *        description: Server error
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              $ref: '#/components/schemas/Error'
  *    security:
  *    - app_id: []
  */
@@ -505,12 +628,20 @@ router.delete("/drivers/:id", (req, res) => {
  *            schema:
  *              type: object
  *              $ref: '#/components/schemas/Driver'
- *      400:
- *        description: Bad request
  *      404:
  *        description: Not found
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              $ref: '#/components/schemas/Error'
  *      405:
  *        description: Invalid input
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              $ref: '#/components/schemas/Error'
  *    security:
  *    - app_id: []
  */
@@ -554,12 +685,20 @@ router.put("/drivers/:id", (req, res) => {
  *            schema:
  *              type: object
  *              $ref: '#/components/schemas/Driver'
- *      400:
- *        description: Bad request
  *      404:
  *        description: Not found
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              $ref: '#/components/schemas/Error'
  *      405:
  *        description: Invalid input
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              $ref: '#/components/schemas/Error'
  *    security:
  *    - app_id: []
  */
