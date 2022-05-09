@@ -91,12 +91,59 @@ const router = express.Router();
  *        city: Kharkiv
  *        rating: 10
  *        status: active
- *    Error:
- *      type: object
- *      properties:
- *        message:
- *          type: string
- *          example: Request failed
+ *  responses:
+ *    NotFound:
+ *      description: Not found
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              code:
+ *                type: string
+ *                example: 404
+ *              message:
+ *                type: string
+ *                example: Not found
+ *    BadRequest:
+ *      description: Bad request
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              code:
+ *                type: string
+ *                example: 400
+ *              message:
+ *                type: string
+ *                example: Bad request
+ *    InvalidInput:
+ *      description: Invalid input
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              code:
+ *                type: string
+ *                example: 405
+ *              message:
+ *                type: string
+ *                example: Invalid input
+ *    ServerError:
+ *      description: Server error
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              code:
+ *                type: string
+ *                example: 500
+ *              message:
+ *                type: string
+ *                example: Server error
  */
 
 // add a car
@@ -121,20 +168,10 @@ const router = express.Router();
  *            schema:
  *              type: object
  *              $ref: '#/components/schemas/Car'
- *      400:
- *        description: Bad request
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              $ref: '#/components/schemas/Error'
  *      405:
- *        description: Invalid input
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              $ref: '#/components/schemas/Error'
+ *       $ref: '#/components/responses/InvalidInput'
+ *      500:
+ *       $ref: '#/components/responses/ServerError'
  *    security:
  *    - app_id: []
  */
@@ -143,7 +180,7 @@ router.post("/cars", (req, res) => {
   car
     .save()
     .then((data) => res.status(201).json(data))
-    .catch((error) => res.json({ message: error.message }));
+    .catch((error) => res.status(500).json({ message: error.message }));
 });
 
 // get all cars
@@ -163,12 +200,7 @@ router.post("/cars", (req, res) => {
  *              items:
  *                $ref: '#/components/schemas/Car'
  *      500:
- *        description: Server error
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              $ref: '#/components/schemas/Error'
+ *       $ref: '#/components/responses/ServerError'
  *    security:
  *    - app_id: []
  */
@@ -202,26 +234,11 @@ router.get("/cars", (req, res) => {
  *              type: object
  *              $ref: '#/components/schemas/Car'
  *      400:
- *        description: Bad request
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              $ref: '#/components/schemas/Error'
+ *       $ref: '#/components/responses/BadRequest'
  *      404:
- *        description: Not found
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              $ref: '#/components/schemas/Error'
+ *       $ref: '#/components/responses/NotFound'
  *      500:
- *        description: Server error
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              $ref: '#/components/schemas/Error'
+ *       $ref: '#/components/responses/ServerError'
  *    security:
  *    - app_id: []
  */
@@ -242,7 +259,7 @@ router.get("/cars/:id", (req, res) => {
 // get a driver's cars
 /**
  * @swagger
- * /api/cars/findByDriverId/{driverId}:
+ * /api/cars/sort_by/{driverId}:
  *  get:
  *    summary: returns a driver's cars
  *    tags: [Car]
@@ -262,23 +279,13 @@ router.get("/cars/:id", (req, res) => {
  *              type: object
  *              $ref: '#/components/schemas/Car'
  *      400:
- *        description: Bad request
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              $ref: '#/components/schemas/Error'
+ *       $ref: '#/components/responses/BadRequest'
  *      404:
- *        description: Not found
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              $ref: '#/components/schemas/Error'
+ *       $ref: '#/components/responses/NotFound'
  *    security:
  *    - app_id: []
  */
-router.get("/cars/findByDriverId/:driverId", (req, res) => {
+router.get("/cars/sort_by/:driverId", (req, res) => {
   const { driverId } = req.params;
   carSchema
     .find({ driverId: driverId })
@@ -309,20 +316,8 @@ router.get("/cars/findByDriverId/:driverId", (req, res) => {
  *    responses:
  *      200:
  *        description: ok
- *      400:
- *        description: Bad request
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              $ref: '#/components/schemas/Error'
- *      404:
- *        description: Not found
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              $ref: '#/components/schemas/Error'
+ *      500:
+ *       $ref: '#/components/responses/ServerError'
  *    security:
  *    - app_id: []
  */
@@ -330,14 +325,8 @@ router.delete("/cars/:id", (req, res) => {
   const { id } = req.params;
   carSchema
     .remove({ _id: id })
-    .then((data) => {
-      if (data) {
-        res.status(200).json(data);
-      } else {
-        res.status(404).json({ messages: "Not found" });
-      }
-    })
-    .catch((error) => res.json({ message: error.message }));
+    .then((data) => res.status(200).json(data))
+    .catch((error) => res.status(500).json({ message: error.message }));
 });
 
 // update a car
@@ -370,19 +359,9 @@ router.delete("/cars/:id", (req, res) => {
  *              type: object
  *              $ref: '#/components/schemas/Car'
  *      404:
- *        description: Not found
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              $ref: '#/components/schemas/Error'
+ *       $ref: '#/components/responses/NotFound'
  *      405:
- *        description: Invalid input
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              $ref: '#/components/schemas/Error'
+ *       $ref: '#/components/responses/InvalidInput'
  *    security:
  *    - app_id: []
  */
@@ -429,19 +408,9 @@ router.put("/cars/:id", (req, res) => {
  *              type: object
  *              $ref: '#/components/schemas/Car'
  *      404:
- *        description: Not found
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              $ref: '#/components/schemas/Error'
+ *       $ref: '#/components/responses/NotFound'
  *      405:
- *        description: Invalid input
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              $ref: '#/components/schemas/Error'
+ *       $ref: '#/components/responses/InvalidInput'
  *    security:
  *    - app_id: []
  */
@@ -481,12 +450,9 @@ router.patch("/cars/:id", (req, res) => {
  *              type: object
  *              $ref: '#/components/schemas/Driver'
  *      405:
- *        description: Invalid input
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              $ref: '#/components/schemas/Error'
+ *       $ref: '#/components/responses/InvalidInput'
+ *      500:
+ *       $ref: '#/components/responses/ServerError'
  *    security:
  *    - app_id: []
  */
@@ -495,7 +461,7 @@ router.post("/drivers", (req, res) => {
   driver
     .save()
     .then((data) => res.status(201).json(data))
-    .catch((error) => res.json({ message: error }));
+    .catch((error) => res.status(500).json({ message: error.message }));
 });
 
 // get all drivers
@@ -515,12 +481,7 @@ router.post("/drivers", (req, res) => {
  *              items:
  *                $ref: '#/components/schemas/Driver'
  *      500:
- *        description: Server error
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              $ref: '#/components/schemas/Error'
+ *       $ref: '#/components/responses/ServerError'
  *    security:
  *    - app_id: []
  */
@@ -554,26 +515,11 @@ router.get("/drivers", (req, res) => {
  *              type: object
  *              $ref: '#/components/schemas/Driver'
  *      400:
- *        description: Bad request
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              $ref: '#/components/schemas/Error'
+ *       $ref: '#/components/responses/BadRequest'
  *      404:
- *        description: Not found
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              $ref: '#/components/schemas/Error'
+ *       $ref: '#/components/responses/NotFound'
  *      500:
- *        description: Server error
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              $ref: '#/components/schemas/Error'
+ *       $ref: '#/components/responses/ServerError'
  *    security:
  *    - app_id: []
  */
@@ -608,20 +554,8 @@ router.get("/drivers/:id", (req, res) => {
  *    responses:
  *      200:
  *        description: ok
- *      400:
- *        description: Bad request
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              $ref: '#/components/schemas/Error'
- *      404:
- *        description: Not found
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              $ref: '#/components/schemas/Error'
+ *      500:
+ *       $ref: '#/components/responses/ServerError'
  *    security:
  *    - app_id: []
  */
@@ -629,14 +563,8 @@ router.delete("/drivers/:id", (req, res) => {
   const { id } = req.params;
   driverSchema
     .remove({ _id: id })
-    .then((data) => {
-      if (data) {
-        res.status(200).json(data);
-      } else {
-        res.status(404).json({ messages: "Not found" });
-      }
-    })
-    .catch((error) => res.json({ message: error.message }));
+    .then((data) => res.status(200).json(data))
+    .catch((error) => res.status(500).json({ message: error.message }));
 });
 
 // update a driver
@@ -669,19 +597,9 @@ router.delete("/drivers/:id", (req, res) => {
  *              type: object
  *              $ref: '#/components/schemas/Driver'
  *      404:
- *        description: Not found
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              $ref: '#/components/schemas/Error'
+ *       $ref: '#/components/responses/NotFound'
  *      405:
- *        description: Invalid input
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              $ref: '#/components/schemas/Error'
+ *       $ref: '#/components/responses/InvalidInput'
  *    security:
  *    - app_id: []
  */
@@ -732,19 +650,9 @@ router.put("/drivers/:id", (req, res) => {
  *              type: object
  *              $ref: '#/components/schemas/Driver'
  *      404:
- *        description: Not found
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              $ref: '#/components/schemas/Error'
+ *       $ref: '#/components/responses/NotFound'
  *      405:
- *        description: Invalid input
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              $ref: '#/components/schemas/Error'
+ *       $ref: '#/components/responses/InvalidInput'
  *    security:
  *    - app_id: []
  */
