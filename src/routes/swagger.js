@@ -21,7 +21,7 @@ const router = express.Router();
  *      properties:
  *        driverId:
  *          type: string
- *          description: the driver's name
+ *          description: the driver's id
  *        make:
  *          type: string
  *          description: the car make
@@ -54,6 +54,9 @@ const router = express.Router();
  *    Driver:
  *      type: object
  *      properties:
+ *        _id:
+ *          type: string
+ *          description: the car's id
  *        name:
  *          type: string
  *          description: the driver's name
@@ -76,6 +79,7 @@ const router = express.Router();
  *          type: string
  *          description: the driver's status
  *      required:
+ *        - _id
  *        - name
  *        - registrationDate
  *        - birthDate
@@ -84,6 +88,7 @@ const router = express.Router();
  *        - rating
  *        - status
  *      example:
+ *        _id: 6276221f2f2a55696eae2a11
  *        name: Alex Ray
  *        registrationDate: 12.01.2022
  *        birthDate: 23.10.1996
@@ -92,6 +97,82 @@ const router = express.Router();
  *        rating: 10
  *        status: active
  *  responses:
+ *    CarSuccess:
+ *      description: Success
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              _id:
+ *                type: string
+ *                description: the car's id
+ *              driverId:
+ *                type: string
+ *                description: the driver's id
+ *              make:
+ *                type: string
+ *                description: the car make
+ *              model:
+ *                type: string
+ *                description: the car model
+ *              number:
+ *                type: string
+ *                description: the car number
+ *              year:
+ *                type: integer
+ *                description: the year of production
+ *              status:
+ *                type: string
+ *                description: status of the car
+ *            example:
+ *              _id: 6276221f2f2a55696eae2a11
+ *              driverId: 627622eaa1161789f49f277c
+ *              make: Honda
+ *              model: Civic
+ *              number: AX1234KA
+ *              year: 2018
+ *              status: standard
+ *    DriverSuccess:
+ *      description: Success
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              _id:
+ *                type: string
+ *                description: the car's id
+ *              name:
+ *                type: string
+ *                description: the driver's name
+ *              registrationDate:
+ *                type: string
+ *                description: date of the driver's registration
+ *              birthDate:
+ *                type: string
+ *                description: date of the driver's birth
+ *              address:
+ *                type: string
+ *                description: the address
+ *              city:
+ *                type: string
+ *                description: the city
+ *              rating:
+ *                type: integer
+ *                description: the driver's rating
+ *              status:
+ *                type: string
+ *                description: the driver's status
+ *            example:
+ *              _id: 6276221f2f2a55696eae2a11
+ *              name: Alex Ray
+ *              registrationDate: 12.01.2022
+ *              birthDate: 23.10.1996
+ *              address: Valentinovskaya Street,25
+ *              city: Kharkiv
+ *              rating: 10
+ *              status: active
  *    NotFound:
  *      description: Not found
  *      content:
@@ -162,12 +243,7 @@ const router = express.Router();
  *            $ref: '#/components/schemas/Car'
  *    responses:
  *      201:
- *        description: success
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              $ref: '#/components/schemas/Car'
+ *       $ref: '#/components/responses/CarSuccess'
  *      405:
  *       $ref: '#/components/responses/InvalidInput'
  *      500:
@@ -192,13 +268,7 @@ router.post("/cars", (req, res) => {
  *    tags: [Car]
  *    responses:
  *      200:
- *        description: ok
- *        content:
- *          application/json:
- *            schema:
- *              type: array
- *              items:
- *                $ref: '#/components/schemas/Car'
+ *       $ref: '#/components/responses/CarSuccess'
  *      500:
  *       $ref: '#/components/responses/ServerError'
  *    security:
@@ -227,12 +297,7 @@ router.get("/cars", (req, res) => {
  *          description: the car id
  *    responses:
  *      200:
- *        description: ok
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              $ref: '#/components/schemas/Car'
+ *       $ref: '#/components/responses/CarSuccess'
  *      400:
  *       $ref: '#/components/responses/BadRequest'
  *      404:
@@ -259,25 +324,20 @@ router.get("/cars/:id", (req, res) => {
 // get a driver's cars
 /**
  * @swagger
- * /api/cars/sort_by/{driverId}:
+ * /api/cars/driverId/{id}:
  *  get:
  *    summary: returns a driver's cars
  *    tags: [Car]
  *    parameters:
  *      - in: path
- *        name: driverId
+ *        name: id
  *        schema:
  *          type: string
  *          required: true
- *          description: the car id
+ *          description: the driver id
  *    responses:
  *      200:
- *        description: ok
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              $ref: '#/components/schemas/Car'
+ *       $ref: '#/components/responses/CarSuccess'
  *      400:
  *       $ref: '#/components/responses/BadRequest'
  *      404:
@@ -285,10 +345,11 @@ router.get("/cars/:id", (req, res) => {
  *    security:
  *    - app_id: []
  */
-router.get("/cars/sort_by/:driverId", (req, res) => {
-  const { driverId } = req.params;
+router.get("/cars/driverId/:id", (req, res) => {
+  const { id } = req.params;
+  console.log(req.params);
   carSchema
-    .find({ driverId: driverId })
+    .find({ driverId: id })
     .then((data) => {
       if (data) {
         res.status(200).json(data);
@@ -352,12 +413,7 @@ router.delete("/cars/:id", (req, res) => {
  *            $ref: '#/components/schemas/Car'
  *    responses:
  *      200:
- *        description: ok
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              $ref: '#/components/schemas/Car'
+ *       $ref: '#/components/responses/CarSuccess'
  *      404:
  *       $ref: '#/components/responses/NotFound'
  *      405:
@@ -401,12 +457,7 @@ router.put("/cars/:id", (req, res) => {
  *            $ref: '#/components/schemas/Car'
  *    responses:
  *      200:
- *        description: ok
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              $ref: '#/components/schemas/Car'
+ *       $ref: '#/components/responses/CarSuccess'
  *      404:
  *       $ref: '#/components/responses/NotFound'
  *      405:
@@ -443,12 +494,7 @@ router.patch("/cars/:id", (req, res) => {
  *            $ref: '#/components/schemas/Driver'
  *    responses:
  *      201:
- *        description: success
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              $ref: '#/components/schemas/Driver'
+ *       $ref: '#/components/responses/DriverSuccess'
  *      405:
  *       $ref: '#/components/responses/InvalidInput'
  *      500:
@@ -473,13 +519,7 @@ router.post("/drivers", (req, res) => {
  *    tags: [Driver]
  *    responses:
  *      200:
- *        description: ok
- *        content:
- *          application/json:
- *            schema:
- *              type: array
- *              items:
- *                $ref: '#/components/schemas/Driver'
+ *       $ref: '#/components/responses/DriverSuccess'
  *      500:
  *       $ref: '#/components/responses/ServerError'
  *    security:
@@ -508,12 +548,7 @@ router.get("/drivers", (req, res) => {
  *          description: the driver id
  *    responses:
  *      200:
- *        description: ok
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              $ref: '#/components/schemas/Driver'
+ *       $ref: '#/components/responses/CarSuccess'
  *      400:
  *       $ref: '#/components/responses/BadRequest'
  *      404:
@@ -590,12 +625,7 @@ router.delete("/drivers/:id", (req, res) => {
  *            $ref: '#/components/schemas/Driver'
  *    responses:
  *      200:
- *        description: ok
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              $ref: '#/components/schemas/Driver'
+ *       $ref: '#/components/responses/DriverSuccess'
  *      404:
  *       $ref: '#/components/responses/NotFound'
  *      405:
@@ -643,12 +673,7 @@ router.put("/drivers/:id", (req, res) => {
  *            $ref: '#/components/schemas/Driver'
  *    responses:
  *      200:
- *        description: ok
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              $ref: '#/components/schemas/Driver'
+ *       $ref: '#/components/responses/DriverSuccess'
  *      404:
  *       $ref: '#/components/responses/NotFound'
  *      405:
