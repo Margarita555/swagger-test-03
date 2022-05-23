@@ -79,9 +79,6 @@ const router = express.Router();
  *        - name
  *        - registrationDate
  *        - birthDate
- *        - address
- *        - city
- *        - rating
  *        - status
  *      example:
  *        name: Alex Ray
