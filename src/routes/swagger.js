@@ -54,9 +54,6 @@ const router = express.Router();
  *    Driver:
  *      type: object
  *      properties:
- *        _id:
- *          type: string
- *          description: the car's id
  *        name:
  *          type: string
  *          description: the driver's name
@@ -79,7 +76,6 @@ const router = express.Router();
  *          type: string
  *          description: the driver's status
  *      required:
- *        - _id
  *        - name
  *        - registrationDate
  *        - birthDate
@@ -88,7 +84,6 @@ const router = express.Router();
  *        - rating
  *        - status
  *      example:
- *        _id: 6276221f2f2a55696eae2a11
  *        name: Alex Ray
  *        registrationDate: 12.01.2022
  *        birthDate: 23.10.1996
@@ -635,11 +630,22 @@ router.delete("/drivers/:id", (req, res) => {
  */
 router.put("/drivers/:id", (req, res) => {
   const { id } = req.params;
-  const { name, birthDate, address, city, rating, status } = req.body;
+  const { name, birthDate, registrationDate, address, city, rating, status } =
+    req.body;
   driverSchema
     .updateOne(
       { _id: id },
-      { $set: { name, birthDate, address, city, rating, status } }
+      {
+        $set: {
+          name,
+          birthDate,
+          registrationDate,
+          address,
+          city,
+          rating,
+          status,
+        },
+      }
     )
     .then((data) => {
       if (data) {
@@ -683,11 +689,22 @@ router.put("/drivers/:id", (req, res) => {
  */
 router.patch("/drivers/:id", (req, res) => {
   const { id } = req.params;
-  const { name, birthDate, address, city, rating, status } = req.body;
+  const { name, birthDate, registrationDate, address, city, rating, status } =
+    req.body;
   driverSchema
     .updateOne(
       { _id: id },
-      { $set: { name, birthDate, address, city, rating, status } }
+      {
+        $set: {
+          name,
+          birthDate,
+          registrationDate,
+          address,
+          city,
+          rating,
+          status,
+        },
+      }
     )
     .then((data) => {
       if (data) {
